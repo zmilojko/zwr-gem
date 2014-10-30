@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.description = "A gem in which I jam what I commonly use."
   s.authors     = ["Zeljko"]
   s.email       = 'zeljko@zwr.fi'
-  s.files       = ["lib/zwr.rb", "lib/zwr/railtie.rb", "lib/tasks/loc.rake"]
+  s.files       = `git ls-files`.split("\n") - %w(.rvmrc .gitignore)
   s.homepage    =
     'http://rubygems.org/gems/zwr'
   s.license       = 'MIT'
