@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+def show_usage
+  puts "Usage:"
+  puts ""
+  puts "  zwr new app_name [remote_repo]"
+end
+
+case ARGV[0]
+when 'new'
+  if ARGV.length < 2
+    puts "Not enough parameters"
+    puts ""
+    show_usage
+  elsif `git status 2>&1` != "fatal: Not a git repository (or any of the parent directories): .git\n"
+    puts "You are in a git repo, and that is not good!"
+  else
+    puts "creating and initializing new app #{ARGV[1]}"
+    `rails new #{ARGV[1]} --skip-bundle`
+    
+    Dir.chdir ARGV[1]
+    puts "Gemfile as we like it!"
+    `echo "gem 'zwr'" >> Gemfile`
+    `sed '/turbolinks/d' -i Gemfile`
+    `sed "s/# gem 'theruby/gem 'theruby/" -i Gemfile`
+
+    `echo "gem 'bootstrap-sass', '~> 3.2.0'" >> Gemfile`
+    #`echo "gem 'autoprefixer-rails', '~> 3.2.0'" >> Gemfile`
+
+    `echo "gem 'puma', platforms: :ruby" >> Gemfile`
+    `echo "gem 'haml-rails'" >> Gemfile`
+    `echo "gem 'angularjs-rails'" >> Gemfile`
+    `echo "gem 'angular-rails-templates'" >> Gemfile`
+    `echo "gem 'angular-ui-bootstrap-rails'" >> Gemfile`
+    `echo "# following should solve the CSRF token with angular" >> Gemfile`
+    `echo "gem 'angular_rails_csrf'" >> Gemfile`
+    `echo "gem 'devise'" >> Gemfile`
+    `echo "gem 'redcarpet'" >> Gemfile`
+    `echo "gem 'paperclip', '~> 4.2'" >> Gemfile`
+    
+    # Following are for Mongo only, will add it later
+    #gem 'mongoid', '~> 4.0.0.beta1',github: 'mongoid/mongoid'
+    #gem 'bson_ext'
+    
+    `echo "gem 'factory_girl_rails', '~> 4.0'" >> Gemfile`
+    
+    `echo "gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]" >> Gemfile`
+    `echo "gem 'tzinfo', platforms: [:mingw, :mswin, :x64_mingw]" >> Gemfile`
+    
+    puts "README as we like it!"
+    `rm README.rdoc`
+    `echo "Application #{ARGV[1]} generated bu the zwr generator." > README.markdown`
+    
+    puts "bundling up... This may take a few minutes..."
+    #`bundle install`
+    puts "zwring..."
+    `rake zwr:install`
+    puts "git it up"
+    `git init`
+    `git add -A`
+    `git commit -sm "initial commit - zwr new #{ARGV[1]}"`
+    `git remote add origin git@github.com:zmilojko/#{ARGV[1]}.git`
+    
+    puts "Completed. If there was no errors above, you should be good to go!"
+  end
+else
+  show_usage
+end
