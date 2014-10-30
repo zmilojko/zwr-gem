@@ -37,6 +37,7 @@ when 'new'
     `echo "gem 'devise'" >> Gemfile`
     `echo "gem 'redcarpet'" >> Gemfile`
     `echo "gem 'paperclip', '~> 4.2'" >> Gemfile`
+    `echo "gem 'html2haml'" >> Gemfile`
     
     # Following are for Mongo only, will add it later
     #gem 'mongoid', '~> 4.0.0.beta1',github: 'mongoid/mongoid'
@@ -52,7 +53,7 @@ when 'new'
     `echo "Application #{ARGV[1]} generated bu the zwr generator." > README.markdown`
     
     puts "bundling up... This may take a few minutes..."
-    #`bundle install`
+    `bundle install`
     puts "zwring..."
     `rake zwr:install`
     puts "git it up"
