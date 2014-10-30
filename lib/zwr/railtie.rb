@@ -5,7 +5,7 @@ module Zwr
     railtie_name :zwr
 
     rake_tasks do
-      load "tasks/loc.rake"
+      Dir[File.join(File.dirname(__FILE__),'../tasks/*.rake')].each { |f| load f }
     end
 
     # Following will allow us to use something like the following 
