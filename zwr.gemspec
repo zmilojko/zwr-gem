@@ -7,8 +7,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Zeljko"]
   s.email       = 'zeljko@zwr.fi'
   s.files       = `git ls-files`.split("\n") - %w(.rvmrc .gitignore)
-  s.executables   = ["zwr"]
-  s.homepage    =
-    'http://rubygems.org/gems/zwr'
+  s.executables = ["zwr"]
+  s.homepage    = 'http://rubygems.org/gems/zwr'
   s.license       = 'MIT'
 end
