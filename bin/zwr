@@ -1,5 +1,29 @@
 #!/usr/bin/env ruby
 
+require 'optparse'
+
+@options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: zwr new PROJECT_NAME [options]"
+
+  opts.on("-v", "--[no-]verbose", "Run verbosely, will print really a lot of output") do |v|
+    @options[:verbose] = v
+  end
+  
+  @options[:bundle] = true
+  opts.on("--skip-bundle", %(Skip bundle install. This will speed up execution, but wil not 
+                                     install missing gems. Useful only for debugging templates.)) do |v|
+    @options[:bundle] = not(v)
+  end
+end.parse!
+
+def putsv txt
+  puts txt.to_s if @options[:verbose]
+end
+
+putsv "Using options: #{@options}"
+putsv "Executing command: #{ARGV}"
+
 def show_usage
   puts "Usage:"
   puts ""
@@ -19,7 +43,8 @@ when 'new'
     `rails new #{ARGV[1]} --skip-bundle`
     
     Dir.chdir ARGV[1]
-    puts "Gemfile as we like it!"
+    putsv "Gemfile as we like it!"
+
     `echo "gem 'zwr'" >> Gemfile`
     `sed '/turbolinks/d' -i Gemfile`
     `sed "s/# gem 'theruby/gem 'theruby/" -i Gemfile`
@@ -47,16 +72,18 @@ when 'new'
     
     `echo "gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]" >> Gemfile`
     `echo "gem 'tzinfo', platforms: [:mingw, :mswin, :x64_mingw]" >> Gemfile`
-    
-    puts "README as we like it!"
+
+    putsv "README as we like it!"
     `rm README.rdoc`
     `echo "Application #{ARGV[1]} generated bu the zwr generator." > README.markdown`
-    
-    puts "bundling up... This may take a few minutes..."
-    `bundle install`
-    puts "zwring..."
+
+    if @options[:bundle]
+      putsv "bundling up... This may take a few minutes..."
+      `bundle install`
+    end
+    putsv "zwring..."
     `rake zwr:install`
-    puts "git it up"
+    putsv "git it up"
     `git init`
     `git add -A`
     `git commit -sm "initial commit - zwr new #{ARGV[1]}"`
