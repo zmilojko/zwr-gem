@@ -50,4 +50,37 @@ namespace :zwr do
       Markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
       FILE_CONTENT
   end
+              
+  desc "prepares production branch ready to roll"
+  task :prepare do
+    Dir.chdir Rails.root
+    git_status = `git status`
+    unless git_status.downcase.include?("on branch master") && 
+        git_status.downcase.include?("nothing to commit, working directory clean")
+      puts "Commit all changes and make sure you are on the master branch."
+    else
+      branches = `git branch`
+      unless branches.include?("production")
+        `sed "s|serve_static_assets = false|serve_static_assets = true|" -i #{Rails.root.join('config/environments/production.rb')}`
+        `sed "s/.*# config.secret_key.*/  config.secret_key = '#{SecureRandom.hex(64)}'/" -i  #{Rails.root.join('config/initializers/devise.rb')}`
+        `sed 's|... ENV..SECRET_KEY_BASE.. ..|#{SecureRandom.hex(64)}|' -i #{Rails.root.join('config/secrets.yml')}`
+        `git commit -asm "zwr deployment modifications"`
+        `chmod 777 tmp -R`
+        `chmod 777 log`
+        `chmod 777 db`
+        `git branch production`
+        `git checkout production`
+      else
+        `git checkout production`
+        `git reset --hard master`
+      end
+      Rails.env = "production"
+      Rake::Task["assets:precompile"].reenable
+      Rake::Task["assets:precompile"].invoke
+      `git add -A`
+      `git commit -asm "precompiled resources"`
+      `git push -u origin master`
+      `git push -uf origin production`
+    end
+  end
 end
