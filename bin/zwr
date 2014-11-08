@@ -59,7 +59,7 @@ when 'new'
     `echo "gem 'angular-ui-bootstrap-rails'" >> Gemfile`
     `echo "# following should solve the CSRF token with angular" >> Gemfile`
     `echo "gem 'angular_rails_csrf'" >> Gemfile`
-    `echo "gem 'devise'" >> Gemfile`
+    `echo "gem 'devise', '~> 3.3.0'" >> Gemfile`
     `echo "gem 'redcarpet'" >> Gemfile`
     `echo "gem 'paperclip', '~> 4.2'" >> Gemfile`
     `echo "gem 'html2haml'" >> Gemfile`
