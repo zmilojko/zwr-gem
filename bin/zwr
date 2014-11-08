@@ -88,6 +88,8 @@ when 'new'
     `git add -A`
     `git commit -sm "initial commit - zwr new #{ARGV[1]}"`
     `git remote add origin git@github.com:zmilojko/#{ARGV[1]}.git`
+    putsv "database generation"
+    `rake db:migrate`
     
     puts "Completed. If there was no errors above, you should be good to go!"
   end
