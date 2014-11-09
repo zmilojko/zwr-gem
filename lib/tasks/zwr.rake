@@ -1,5 +1,6 @@
 require 'active_support'
 require 'active_support/core_ext'
+require 'rake'
 
 namespace :zwr do
   ASSETS_FOLDER = File.realpath( File.dirname( __FILE__ ) + '/../../assets')

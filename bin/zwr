@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
+require 'active_support'
+require 'active_support/core_ext'
+require 'rake'
 
 @options = {}
 OptionParser.new do |opts|
@@ -27,7 +30,7 @@ putsv "Executing command: #{ARGV}"
 def show_usage
   puts "Usage:"
   puts ""
-  puts "  zwr new app_name [remote_repo]"
+  puts "  zwr [new|deploy] app_name [options]"
 end
 
 case ARGV[0]
@@ -92,6 +95,51 @@ when 'new'
     `rake db:migrate`
     
     puts "Completed. If there was no errors above, you should be good to go!"
+  end
+when 'deploy'
+  if ARGV.length < 2
+    puts "Not enough parameters"
+    puts ""
+    show_usage
+  elsif ENV['USER'] != "root"
+    puts "This script must be run as super user. Use sudo zwr deploy #{ARGV[2]}"
+  else
+    if File.directory? "/var/rails_apps/#{ARGV[1]}"
+      putsv "Updating existing #{ARGV[1]}"
+      Dir.chdir "/var/rails_apps/#{ARGV[1]}"
+      `cd /var/rails_apps/#{ARGV[1]} ; git fetch`
+      `cd /var/rails_apps/#{ARGV[1]} ; git checkout production`
+      `cd /var/rails_apps/#{ARGV[1]} ; git reset --hard origin/production`
+    else
+      Dir.chdir "/var/rails_apps"
+      putsv "Deploying new project #{ARGV[1]}"
+      `git clone git@github.com:zmilojko/tst.git`
+      Dir.chdir "/var/rails_apps/#{ARGV[1]}"
+      `cd /var/rails_apps/#{ARGV[1]} ; git checkout production`
+      `bundle install`
+      `cd /var/rails_apps/#{ARGV[1]} ; RAILS_ENV=production rake db:migrate`
+      `cd /var/rails_apps/#{ARGV[1]} ; RAILS_ENV=production rake db:seed`
+      `mkdir /var/rails_apps/#{ARGV[1]}/tmp`
+      `chmod 777 /var/rails_apps/#{ARGV[1]}/tmp -R`
+      `chmod 777 /var/rails_apps/#{ARGV[1]}/log`
+      `chmod 777 /var/rails_apps/#{ARGV[1]}/db`
+      `chmod 777 /var/rails_apps/#{ARGV[1]}/db/production.sqlite3`
+      virtual_host_file = (<<-VHFILE.strip_heredoc)
+      <VirtualHost *:80>
+          # This Rails web app will use Ruby 1.9.3, as installed by RVM
+          PassengerRuby /usr/local/rvm/wrappers/ruby-1.9.3-p0/ruby
+          ServerName #{ARGV[1]}.zwr.fi
+          DocumentRoot /var/rails_apps/#{ARGV[1]}/public
+          <Directory /var/rails_apps/#{ARGV[1]}/public>
+            AllowOverride all
+            Options -MultiViews
+          </Directory>
+      </VirtualHost>
+      VHFILE
+      `echo "#{virtual_host_file}" > /etc/httpd/virtual_hosts/#{ARGV[1]}.conf`
+      `service httpd reload`
+    end
+    `touch /var/rails_apps/#{ARGV[1]}/tmp/restart.txt`
   end
 else
   show_usage
