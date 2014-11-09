@@ -10,4 +10,6 @@ Gem::Specification.new do |s|
   s.executables = ["zwr"]
   s.homepage    = 'http://rubygems.org/gems/zwr'
   s.license       = 'MIT'
+
+  s.add_dependency "railties", ">= 3.1"
 end
