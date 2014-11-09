@@ -11,5 +11,5 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://rubygems.org/gems/zwr'
   s.license       = 'MIT'
 
-  s.add_dependency "railties", ">= 3.1"
+  s.add_dependency "railties", "~> 4.0", ">= 3.1"
 end
