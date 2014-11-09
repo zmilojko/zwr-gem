@@ -16,3 +16,4 @@
 /tmp
 
 /zwr-*.gem
+Gemfile.lock
