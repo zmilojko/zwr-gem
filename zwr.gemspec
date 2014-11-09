@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'zwr'
-  s.version     = '0.0.9'
+  s.version     = '0.1.0'
   s.date        = '2014-10-26'
   s.summary     = "All the Zwr needs"
   s.description = "A gem in which I jam what I commonly use."
