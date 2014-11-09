@@ -1,0 +1,16 @@
+@media(max-width: $grid-float-breakpoint - 1 /*767px*/) {
+  .navbar-text {
+    margin-top: 10px;
+  }
+  .navbar-toggle {
+    margin-left: 16px;
+  }
+  .navbar-nav {
+    margin-top: 5px;
+    margin-bottom: 0px;
+  }
+}
+
+body {
+  background: #F6F6F6 url(/assets/bg.png) repeat-x;
+}
