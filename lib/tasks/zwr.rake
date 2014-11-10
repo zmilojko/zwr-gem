@@ -95,7 +95,6 @@ namespace :zwr do
                         %a(href="#") Right 2
               = yield
       FILE_CONTENT
-    File.delete Rails.root.join('app/views/layouts/application.html.erb')
     File.delete Rails.root.join('app/assets/javascripts/application.js')
     File.write(Rails.root.join('app/assets/javascripts/app.js.coffee'), <<-FILE_CONTENT.strip_heredoc)
         #= require angular
