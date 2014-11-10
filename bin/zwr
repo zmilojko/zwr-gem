@@ -85,7 +85,7 @@ when 'new'
       `bundle install`
     end
     putsv "zwring..."
-    `rake zwr:install`
+    puts `rake zwr:install`
     putsv "git it up"
     `git init`
     `git add -A`
