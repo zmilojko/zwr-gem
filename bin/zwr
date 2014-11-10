@@ -116,7 +116,7 @@ when 'deploy'
     else
       Dir.chdir "/var/rails_apps"
       putsv "Deploying new project #{ARGV[1]}"
-      `git clone git@github.com:zmilojko/tst.git`
+      `git clone git@github.com:zmilojko/#{ARGV[1]}.git`
       Dir.chdir "/var/rails_apps/#{ARGV[1]}"
       `cd /var/rails_apps/#{ARGV[1]} ; git checkout production`
       `bundle install`

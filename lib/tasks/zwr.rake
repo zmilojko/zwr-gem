@@ -7,7 +7,7 @@ namespace :zwr do
   task :install do
     puts "placing default favicon"
     FileUtils.cp "#{File.dirname( __FILE__ )}/../../app/assets/images/favicon.ico", Rails.root.join('public')
-    File.delete Rails.root.join('app/views/layouts/application.html.haml')
+    File.delete Rails.root.join('app/views/layouts/application.html.erb')
     File.write(Rails.root.join('app/views/layouts/application.html.haml'),<<-FILE_CONTENT.strip_heredoc)
         !!!
         %html
