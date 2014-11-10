@@ -93,8 +93,11 @@ when 'new'
     `git remote add origin git@github.com:zmilojko/#{ARGV[1]}.git`
     putsv "database generation"
     `rake db:migrate`
-    
+    putsv "praxing"
+    `prax link`
+    `prax start`
     puts "Completed. If there was no errors above, you should be good to go!"
+    puts "In your browser, open http://#{ARGV[1]}.dev"
   end
 when 'deploy'
   if ARGV.length < 2
