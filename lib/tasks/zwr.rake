@@ -5,6 +5,7 @@ require 'rake'
 namespace :zwr do
   desc "installs zwr gem and features into a new app"
   task :install do
+    projectname = Rails.root.basename.to_s
     puts "placing default favicon"
     FileUtils.cp "#{File.dirname( __FILE__ )}/../../app/assets/images/favicon.ico", Rails.root.join('public')
     File.delete Rails.root.join('app/views/layouts/application.html.erb')
@@ -12,7 +13,7 @@ namespace :zwr do
         !!!
         %html
           %head
-            %title Tst
+            %title #{projectname.capitalize}
             %meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0")
             -# android stand alone mode
             %meta(name="mobile-web-app-capable" content="yes")
@@ -43,7 +44,7 @@ namespace :zwr do
                   .navbar-header.pull-left
                     %a.navbar-brand(href="#")
                       =image_tag "logo.png", height: '20'
-                      Tst
+                      #{projectname.capitalize}
                   -# Sticky menu, on the right
                   #navbar-steady.navbar-header.pull-right
                     %ul.nav.navbar-nav.pull-left
