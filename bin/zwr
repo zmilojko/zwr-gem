@@ -20,6 +20,25 @@ OptionParser.new do |opts|
                                      install missing gems. Useful only for debugging templates.)) do |v|
     @options[:bundle] = not(v)
   end
+  
+  @options[:activerecord] = true
+  opts.on("--skip-active-record", %(Skip activerecord. Use this if you will use Mongo.)) do |v|
+    @options[:activerecord] = not(v)
+  end
+
+  opts.on("-r", "--ruby RUBY_VER",
+          "Set ruby version in .rvmrc") do |ruby_ver|
+    @options[:ruby_ver] = ruby_ver
+  end
+
+  @options[:mongoid] = false
+  opts.on("--mongoid",
+          "Use MongoDB with Mongoid gem") do |v|
+    @options[:mongoid] = v
+    if @options[:mongoid]
+      @options[:activerecord] = false
+    end
+  end
 end.parse!
 
 def putsv txt
@@ -45,7 +64,7 @@ when 'new'
     puts "You are in a git repo, and that is not good!"
   else
     puts "creating and initializing new app #{ARGV[1]}"
-    `rails new #{ARGV[1]} --skip-bundle`
+    putsv `rails new #{ARGV[1]} --skip-bundle #{"--skip-active-record" if not @options[:activerecord]}`
     
     Dir.chdir ARGV[1]
     putsv "Gemfile as we like it!"
@@ -70,8 +89,10 @@ when 'new'
     `echo "gem 'html2haml'" >> Gemfile`
     
     # Following are for Mongo only, will add it later
-    #gem 'mongoid', '~> 4.0.0.beta1',github: 'mongoid/mongoid'
-    #gem 'bson_ext'
+    if @options[:mongoid]
+      `echo "gem 'mongoid', '~> 4.0.0',github: 'mongoid/mongoid'" >> Gemfile`
+      `echo "gem 'bson_ext'" >> Gemfile`
+    end
     
     `echo "gem 'factory_girl_rails', '~> 4.0'" >> Gemfile`
     
@@ -79,28 +100,37 @@ when 'new'
     `echo "gem 'tzinfo', platforms: [:mingw, :mswin, :x64_mingw]" >> Gemfile`
 
     putsv "README as we like it!"
-    `rm README.rdoc`
+    putsv `rm README.rdoc`
     `echo "Application #{ARGV[1]} generated bu the zwr generator." > README.markdown`
 
     if @options[:bundle]
       putsv "bundling up... This may take a few minutes..."
-      `bundle install`
+      putsv `bundle install`
     end
     putsv "zwring..."
-    puts `rake zwr:install`
-    putsv "git it up"
-    `git init`
-    `git add -A`
-    `git commit -sm "initial commit - zwr new #{ARGV[1]}"`
-    `git remote add origin git@github.com:zmilojko/#{ARGV[1]}.git`
+    putsv `rake zwr:install`
+    if @options[:ruby_ver]
+      putsv "creating .ruby-version"
+      `rvm --ruby-version use #{@options[:ruby_ver]} >> .ruby-version`
+    end
+    if @options[:mongoid]
+      putsv "configuration for mongoid"
+      `rails g mongoid:config`
+    end
     putsv "database generation"
-    `rake db:migrate`
+    putsv `rake db:migrate`
     putsv "praxing"
-    `prax link`
-    `prax start`
+    putsv `prax link`
+    putsv `prax start`
+    putsv "git it up"
+    putsv `git init`
+    putsv `git add -A`
+    putsv `git commit -sm "initial commit - zwr new #{ARGV[1]}"`
+    putsv `git remote add origin git@github.com:zmilojko/#{ARGV[1]}.git`
     puts "Completed. If there was no errors above, you should be good to go!"
     puts "In your browser, open http://#{ARGV[1]}.dev"
   end
+
 when 'deploy'
   if ARGV.length < 2
     puts "Not enough parameters"
