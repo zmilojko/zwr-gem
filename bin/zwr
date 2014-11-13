@@ -8,6 +8,8 @@ require 'rake'
 @options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: zwr new PROJECT_NAME [options]"
+  opts.separator ""
+  opts.separator "Specific options:"
 
   opts.on("-v", "--[no-]verbose", "Run verbosely, will print really a lot of output") do |v|
     @options[:verbose] = v
