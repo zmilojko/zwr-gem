@@ -64,7 +64,7 @@ when 'new'
     puts "You are in a git repo, and that is not good!"
   else
     puts "creating and initializing new app #{ARGV[1]}"
-    putsv `rails new #{ARGV[1]} --skip-bundle #{"--skip-active-record" if not @options[:activerecord]}`
+    putsv `rails new #{ARGV[1]} --skip-bundle --skip-spring #{"--skip-active-record" if not @options[:activerecord]}`
     
     Dir.chdir ARGV[1]
     putsv "Gemfile as we like it!"
