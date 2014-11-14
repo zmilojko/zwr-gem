@@ -122,7 +122,7 @@ namespace :zwr do
         */
         @import "bootstrap-sprockets";
         @import "bootstrap";
-        @import "zwr"
+        @import "zwr";
       FILE_CONTENT
     File.write(Rails.root.join('db/seeds.rb'),<<-FILE_CONTENT.strip_heredoc)
       Dir[Rails.root.join('db/seeds/*.rb')].each { |file| load file }
