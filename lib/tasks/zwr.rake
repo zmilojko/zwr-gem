@@ -1,6 +1,7 @@
 require 'active_support'
 require 'active_support/core_ext'
 require 'rake'
+#require 'rails/generators'
 
 namespace :zwr do
   desc "installs zwr gem and features into a new app"
@@ -164,5 +165,23 @@ namespace :zwr do
       `git push -u origin master`
       `git push -uf origin production`
     end
+  end
+  desc "creates user scaffod and devise object"
+  task :user do
+    #Rails::Generators.invoke("devise:install")
+    puts `rails g devise:install`
+    #Rails::Generators.invoke("scaffold",["User", "name:string","email:string",
+    #                                     "password:string","password_confirmation:string", 
+    #                                     "admin:boolean"])
+    puts `rails g scaffold User name:string email:string password:string password_confirmation:string admin:boolean`
+    puts "Removing app/models/user.rb"
+    File.delete Rails.root.join('app/models/user.rb')
+    puts "Renaming test/models/user_test.rb to test/models/user_test_orig.rb"
+    File.rename Rails.root.join('test/models/user_test.rb'), Rails.root.join('test/models/user_test_orig.rb')
+    puts "Removing test/factories/users.rb"
+    File.delete Rails.root.join('test/factories/users.rb')
+    #Rails::Generators.invoke("devise", ["User"])
+    puts `rails g devise User`
+    puts `prax restart`
   end
 end
