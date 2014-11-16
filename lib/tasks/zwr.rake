@@ -2,46 +2,6 @@ require 'active_support'
 require 'active_support/core_ext'
 require 'rake'
 
-class Pathname
-  def remove_line(line)
-    insert(text: "", instead_of: line)
-  end
-  
-  # Will insert LINES after or instead of the LINE that matches given argument
-  def insert(text: nil, after: nil, instead_of: nil, before: nil,  for_each_line: false)
-    raise "You must specify text: argument or give a block that will preform the writing" unless text or block_given?
-    raise "You cannot specify both after: and instead_of: arguments. Pick one." if after and instead_of
-    raise "You cannot specify both after: and before: arguments. Pick one." if after and before
-    raise "You cannot specify both instead_of: and before: arguments. Pick one." if instead_of and before
-    if after || instead_of || before
-      content = File.read(self)
-      File.open(self, "w") do |file|
-        content.lines.each do |line|
-          if line.match(after || instead_of || before)
-            file.puts line if after
-            if text 
-              file.puts text if text != ""
-            else
-              yield file, line
-            end
-            file.puts line if before
-          else
-            file.puts line
-          end
-        end
-      end
-    else
-      File.open(self, "a") do |file|
-        if text 
-          file.puts text
-        else
-          yield file
-        end
-      end
-    end
-  end
-end
-
 namespace :zwr do
   desc "installs icon and other details into the new app."
   task :install do
