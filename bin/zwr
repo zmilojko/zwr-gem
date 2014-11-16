@@ -39,14 +39,28 @@ OptionParser.new do |opts|
       @options[:activerecord] = false
     end
   end
+  
+  @options[:angular] = true
+  opts.on("--skip-angular", %(Skip angular. If you use Angular, it will also generate the
+                                     Main controller to start the angular app, which
+                                     will be set as root.)) do |v|
+    @options[:angular] = not(v)
+  end
+  
+  @options[:devise] = true
+  opts.on("--skip-devise", %(Skip Devise . If you use Devise, it will also generate the User
+                                    model and some helper controllers.)) do |v|
+    @options[:devise] = not(v)
+  end
 end.parse!
 
 def putsv txt
   puts txt.to_s if @options[:verbose]
 end
 
-putsv "Using options: #{@options}"
-putsv "Executing command: #{ARGV}"
+putsv "         \033[35mzwr\033[0m  running!"
+putsv "     \033[35moptions\033[0m  #{@options.map{|k,v| "#{k}=#{v}"}.join(' ')}."
+putsv "        \033[35mexec\033[0m  #{ARGV.join}."
 
 def show_usage
   puts "Usage:"
@@ -63,74 +77,17 @@ when 'new'
   elsif `git status 2>&1` != "fatal: Not a git repository (or any of the parent directories): .git\n"
     puts "You are in a git repo, and that is not good!"
   else
-    puts "creating and initializing new app #{ARGV[1]}"
-    putsv `rails new #{ARGV[1]} --skip-bundle --skip-spring #{"--skip-active-record" if not @options[:activerecord]}`
-    
-    Dir.chdir ARGV[1]
-    putsv "Gemfile as we like it!"
-
-    `echo "gem 'zwr'" >> Gemfile`
-    `sed '/turbolinks/d' -i Gemfile`
-    `sed "s/# gem 'theruby/gem 'theruby/" -i Gemfile`
-
-    `echo "gem 'bootstrap-sass', '~> 3.2.0'" >> Gemfile`
-    #`echo "gem 'autoprefixer-rails', '~> 3.2.0'" >> Gemfile`
-
-    `echo "gem 'puma', platforms: :ruby" >> Gemfile`
-    `echo "gem 'haml-rails'" >> Gemfile`
-    `echo "gem 'angularjs-rails'" >> Gemfile`
-    `echo "gem 'angular-rails-templates'" >> Gemfile`
-    `echo "gem 'angular-ui-bootstrap-rails'" >> Gemfile`
-    `echo "# following should solve the CSRF token with angular" >> Gemfile`
-    `echo "gem 'angular_rails_csrf'" >> Gemfile`
-    `echo "gem 'devise', '~> 3.3.0'" >> Gemfile`
-    `echo "gem 'redcarpet'" >> Gemfile`
-    `echo "gem 'paperclip', '~> 4.2'" >> Gemfile`
-    `echo "gem 'html2haml'" >> Gemfile`
-    
-    # Following are for Mongo only, will add it later
-    if @options[:mongoid]
-      `echo "gem 'mongoid', '~> 4.0.0',github: 'mongoid/mongoid'" >> Gemfile`
-      `echo "gem 'bson_ext'" >> Gemfile`
-    end
-    
-    `echo "gem 'factory_girl_rails', '~> 4.0'" >> Gemfile`
-    
-    `echo "gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]" >> Gemfile`
-    `echo "gem 'tzinfo', platforms: [:mingw, :mswin, :x64_mingw]" >> Gemfile`
-
-    putsv "README as we like it!"
-    putsv `rm README.rdoc`
-    `echo "Application #{ARGV[1]} generated bu the zwr generator." > README.markdown`
-
-    if @options[:bundle]
-      putsv "bundling up... This may take a few minutes..."
-      putsv `bundle install`
-    end
-    putsv "zwring..."
-    putsv `rake zwr:install`
-    if @options[:ruby_ver]
-      putsv "creating .ruby-version"
-      `rvm --ruby-version use #{@options[:ruby_ver]} >> .ruby-version`
-    end
-    if @options[:mongoid]
-      putsv "configuration for mongoid"
-      `rails g mongoid:config`
-    end
-    putsv "database generation"
-    putsv `rake db:migrate`
-    putsv "praxing"
-    putsv `prax link`
-    putsv `prax start`
-    putsv "git it up"
-    putsv `git init`
-    putsv `git add -A`
-    putsv `git commit -sm "initial commit - zwr new #{ARGV[1]}"`
-    putsv `git remote add origin git@github.com:zmilojko/#{ARGV[1]}.git`
-    puts "Completed. If there was no errors above, you should be good to go!"
-    puts "In your browser, open http://#{ARGV[1]}.dev"
+    cmd = <<-CMD.gsub /^ *$\n/, ''
+      rails new #{ARGV[1]} --skip-bundle --skip-spring 
+              #{"--skip-active-record" if not @options[:activerecord]} 
+              -m #{File.expand_path('../../lib/zwr/app_template.rb', __FILE__)}
+              #{"use-mongoid" if @options[:mongoid]}
+              #{"use-angular" if @options[:angular]}
+              #{"use-devise" if @options[:devise]}
+      CMD
+    putsv "        \033[35mexec\033[0m  #{cmd.strip}"
+    exec(cmd.gsub(/\r/," ").gsub(/\n/," ").gsub(/              /," "))
   end
-
 when 'deploy'
   if ARGV.length < 2
     puts "Not enough parameters"
