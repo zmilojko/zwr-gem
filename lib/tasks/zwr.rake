@@ -13,6 +13,18 @@ namespace :zwr do
     `sed "s/# gem 'theruby/gem 'theruby/" -i Gemfile`
   end
 
+  namespace :production do
+    desc "updates production environment to latest production branch"
+    task :update do
+      `git fetch`
+      `git checkout production -q`
+      `git reset --hard origin/production`
+      `touch tmp/restart`
+      puts "now with the latest code from origin/production."
+      puts "server restarted."
+    end
+  end
+  
   desc "prepares production branch ready to roll"
   task :prepare do
     Dir.chdir Rails.root
@@ -43,6 +55,7 @@ namespace :zwr do
       `git commit -asm "precompiled resources"`
       `git push -u origin master`
       `git push -uf origin production`
+      `git checkout master`
     end
   end
 end

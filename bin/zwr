@@ -97,11 +97,9 @@ when 'deploy'
     puts "This script must be run as super user. Use sudo zwr deploy #{ARGV[2]}"
   else
     if File.directory? "/var/rails_apps/#{ARGV[1]}"
-      putsv "Updating existing #{ARGV[1]}"
-      Dir.chdir "/var/rails_apps/#{ARGV[1]}"
-      `cd /var/rails_apps/#{ARGV[1]} ; git fetch`
-      `cd /var/rails_apps/#{ARGV[1]} ; git checkout production`
-      `cd /var/rails_apps/#{ARGV[1]} ; git reset --hard origin/production`
+      puts "Project is already deployed, do the following:"
+      puts "cd /var/rails_apps/#{ARGV[1]}"
+      puts "rake zwr:production:update"
     else
       Dir.chdir "/var/rails_apps"
       putsv "Deploying new project #{ARGV[1]}"
@@ -130,8 +128,8 @@ when 'deploy'
       VHFILE
       `echo "#{virtual_host_file}" > /etc/httpd/virtual_hosts/#{ARGV[1]}.conf`
       `service httpd reload`
+      `touch /var/rails_apps/#{ARGV[1]}/tmp/restart.txt`
     end
-    `touch /var/rails_apps/#{ARGV[1]}/tmp/restart.txt`
   end
 else
   show_usage
