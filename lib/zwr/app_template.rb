@@ -72,7 +72,7 @@ if use_devise
     inject_into_file  'app/models/user.rb', <<-FILE.strip_heredoc, before: "## Database authenticatable\n"
       ## ZWR generated fields
         field :name,               type: String, default: ""
-        field :admin,              type: Boolean, default: ""
+        field :admin,              type: Boolean, default: false
 
       FILE
     gsub_file  'app/models/user.rb', "## Database authenticatable", "  ## Database authenticatable"
@@ -83,7 +83,7 @@ if use_devise
     puts "       \033[35mfound\033[0m  #{filename}"
     inject_into_file(filename, <<-FILE, :after => "Database authenticatable\n")
       t.string   :name
-      t.boolean  :admin
+      t.boolean  :admin, default: false
     FILE
     gsub_file "test/test_helper.rb","fixtures :all", "include FactoryGirl::Syntax::Methods"
   end
