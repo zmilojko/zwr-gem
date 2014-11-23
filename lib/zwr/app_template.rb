@@ -125,8 +125,9 @@ file 'app/assets/stylesheets/application.css.scss', tpl('application.css.scss')
 remove_file 'db/seeds.rb'
 file 'db/seeds.rb', "Dir[Rails.root.join('db/seeds/*.rb')].each { |file| load file }"
 
-initializer 'markdown.rb',
-  'Markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)'
+initializer 'zwr.rb', <<-FILE.strip_heredoc
+  Markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
+  FILE
 
 file 'db/seeds/.keep'
 
