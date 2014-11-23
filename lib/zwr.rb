@@ -11,6 +11,7 @@ module Zwr
     end  
   end
   
+  require 'zwr/zwr_mongoid.rb'
   
 
 end
