@@ -11,7 +11,7 @@ module Zwr
     end  
   end
   
-  require 'zwr/zwr_mongoid.rb'
-  
-
+  if defined?(Mongoid)
+    require 'zwr/zwr_mongoid.rb'
+  end
 end
