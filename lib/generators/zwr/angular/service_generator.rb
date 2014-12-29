@@ -7,10 +7,10 @@ module Zwr
         service_name = file_name.gsub(/[_-]service$/,"")
         ang_file_name = service_name.gsub("_","-")
         service_class = service_name.gsub("-","_").camelize(:lower) + "Service"
-        create_file "app/assets/javascripts/directives/#{ang_file_name}.js.coffee", <<-FILE.strip_heredoc
+        create_file "app/assets/javascripts/services/#{ang_file_name}.js.coffee", <<-FILE.strip_heredoc
           @#{application_name}.service '#{service_class}', [
             '$http', '$q', 'localStorageService',
-            ($http, $q, identComm, localStorageService) -> 
+            ($http, $q, localStorageService) -> 
               service =
                 constructor: ->
                   @my_variable = null

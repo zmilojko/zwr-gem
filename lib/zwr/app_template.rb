@@ -126,7 +126,7 @@ remove_file 'db/seeds.rb'
 file 'db/seeds.rb', "Dir[Rails.root.join('db/seeds/*.rb')].each { |file| load file }"
 
 initializer 'zwr.rb', <<-FILE.strip_heredoc
-  Markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
+  MDParser = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
   FILE
 
 file 'db/seeds/.keep'
