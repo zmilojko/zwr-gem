@@ -6,3 +6,7 @@
 #= require_tree ./directives
 #= require_tree ./services
 #= require_tree ./controllers
+
+@zt_module = angular.module('zt', [
+  'templates',
+  ])
