@@ -15,7 +15,10 @@ module Zwr
                 boo
               service.init(decodeURIComponent($routeParams.tagName))
               .then($scope._rememberItem,$scope._errorHandler)
+            ]
           FILE
+        gsub_file 'app/assets/javascripts/app.js.coffee', 'otherwise({', 
+            %[when('/#{ang_file_name}/:siteName', {\n      templateUrl: '#{ang_file_name}.html',\n    }).\n    otherwise({]
       end
     end
   end
