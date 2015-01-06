@@ -78,7 +78,7 @@ when 'new'
     puts "You are in a git repo, and that is not good!"
   else
     cmd = <<-CMD.gsub /^ *$\n/, ''
-      rails new #{ARGV[1]} --skip-bundle --skip-spring 
+      rails new #{ARGV[1]} #{"--skip-bundle" unless @options[:bundle]} --skip-spring 
               #{"--skip-active-record" if not @options[:activerecord]} 
               -m #{File.expand_path('../../lib/zwr/app_template.rb', __FILE__)}
               #{"use-mongoid" if @options[:mongoid]}
@@ -86,7 +86,7 @@ when 'new'
               #{"use-devise" if @options[:devise]}
       CMD
     putsv "        \033[35mexec\033[0m  #{cmd.strip}"
-    exec(cmd.gsub(/\r/," ").gsub(/\n/," ").gsub(/              /," "))
+    exec(cmd.gsub(/\r/," ").gsub(/\n/," ").gsub(/\ \ +/," "))
   end
 when 'deploy'
   if ARGV.length < 2

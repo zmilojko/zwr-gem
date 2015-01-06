@@ -11,6 +11,9 @@ use_angular = @args.include? 'use-angular'
 use_mongoid = @args.include? 'use-mongoid'
 use_devise = @args.include? 'use-devise'
 
+gsub_file "Gemfile","# gem 'therubyracer'", "gem 'therubyracer'"
+
+
 gem 'zwr'
 gem 'bootstrap-sass', '~> 3.2.0'
 gem 'bootstrap_form'
@@ -58,6 +61,9 @@ gem 'tzinfo', platforms: [:mingw, :mswin, :x64_mingw]
 
 if use_devise
   gem 'devise', '~> 3.3.0'
+  unless use_mongoid
+    run 'bundle install --quiet'
+  end
   generate 'devise:install'
   generate :scaffold, 'User', 'name:string', 'email:string', 
     'password:string', 'password_confirmation:string', 'admin:boolean'
@@ -131,14 +137,11 @@ initializer 'zwr.rb', <<-FILE.strip_heredoc
 
 file 'db/seeds/.keep'
 
-
+run 'bundle install --quiet'
 
 rake 'zwr:install'
 rake 'db:migrate'
 
-unless use_mongoid
-  run 'bundle install --quiet'
-end
 
 # Git commands should be the last so that they catch all the files!
 git init: '-q'
