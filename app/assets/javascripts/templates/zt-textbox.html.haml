@@ -1,0 +1,11 @@
+.form-group.has-feedback(ng-class="{'has-warning': getItem().copy[ztField] != field_value || status == 2, 'has-success': status == 1, 'has-error': status === 4}")
+  %span(ng-transclude ng-hide="status > 1")
+  %span.text-muted(ng-hide="status > 1" ng-click="startEditing()") (edit)
+  %span.glyphicon.glyphicon-ok.text-success(ng-show="status == 1")
+  .input-group(ng-show="status > 1")
+    %input.form-control(ng-model="field_value" )
+    %span.input-group-addon(ng-click="cancelEditing()")
+      %span.glyphicon.glyphicon-remove
+    %span.input-group-addon(ng-click="completeEditing()")
+      %span.glyphicon.glyphicon-warning-sign.text-danger(ng-show="status == 4" title="Could not save changes. Click to try again.")
+      %span.glyphicon(ng-class="{'text-success': status == 1, 'glyphicon-refresh': status == 2, 'text-warning': status == 2, 'glyphicon-ok': status != 2}")

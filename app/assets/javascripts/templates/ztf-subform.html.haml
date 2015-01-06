@@ -1,0 +1,9 @@
+.ztf-subitems
+  %h4(ng-if="ztTitle") {{ztTitle}}
+  .ztf-subitem(style="float: left;clear: both;display: block;" ng-repeat="item in subitems()")
+    %form(role="form" ng-class="{'form-inline': inline}")
+      %ztf-button(style="float: right;clear: none;display: inline;" delete ng-if="canDelete" zt-hide zt-icon zt-inline)
+      %span(style="float: right;clear: none;display: inline;" ng-transclude)
+  .clearfix
+  %ztf-button(add ng-if="canAdd" zt-hide zt-icon)
+
