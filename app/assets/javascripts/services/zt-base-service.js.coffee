@@ -130,7 +130,7 @@
       @front_end_buffer = []
       @eager_loading_ongoing = false
       container = this
-      for d, i in resp.data.list
+      for d, i in resp.data.items
         # add indexes to each array
         for own field of d when d[field] instanceof Array
           for list_item, i2 in d[field]
@@ -151,12 +151,13 @@
           revert: ->
             this.copy = angular.copy(this.data)
           is_first: i == 0
-          is_last: i == resp.data.list.length - 1
-      @front_end_buffer_limit_low = resp.data.list[0][@identifier]
-      @front_end_buffer_limit_high = resp.data.list[-1..][0][@identifier]
-      @front_end_buffer_index_low = resp.data.list[0].index
-      @front_end_buffer_index_high = resp.data.list[-1..][0].index
-      @total_count = resp.data.total_count
+          is_last: i == resp.data.items.length - 1
+      if resp.data.items.length
+        @front_end_buffer_limit_low = resp.data.items[0][@identifier]
+        @front_end_buffer_limit_high = resp.data.items[-1..][0][@identifier]
+        @front_end_buffer_index_low = resp.data.items[0].index
+        @front_end_buffer_index_high = resp.data.items[-1..][0].index
+        @total_count = resp.data.total_count
       resp.data
     @extends_to = (obj) ->
       angular.copy(this, obj)
