@@ -21,8 +21,8 @@
 @zt_module.service 'ztBaseService', [
   '$http', '$q',
   ($http, $q) -> 
-    @front_end_buffer_size = 200
-    @eagerness = 30
+    @front_end_buffer_size = 1000
+    @eagerness = 300
     @page_size = 10
     # Following is the key by which sorting is done
     @front_end_buffer = null
