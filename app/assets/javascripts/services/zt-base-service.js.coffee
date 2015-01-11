@@ -31,6 +31,7 @@
     @front_end_buffer_index_low = null
     @front_end_buffer_index_high = null
     @total_count = null
+    @eager_loading_ongoing = false
     # Method 'item' return the item with given id or the first item available
     # meaning, essentially, any item.
     @item = (id) ->
@@ -56,10 +57,13 @@
         .then ->
           { item: me._find_by_index(item.data.index + offset), total_count: me.total_count }
     @page_items = (page_no, direction) ->
-      if @front_end_buffer? and @front_end_buffer_index_low <= (page_no - 1) * @page_size and page_no * @page_size<= @front_end_buffer_index_high
+      if @front_end_buffer? and @front_end_buffer_index_low <= (page_no - 1) * @page_size and page_no * @page_size<= @front_end_buffer_index_high + 1
         #eager loading
-        if @front_end_buffer_index_low + @eagerness > (page_no - 1) * @page_size or
-            page_no * @page_size > @front_end_buffer_index_high - @eagerness
+        if (!@eager_loading_ongoing) and
+            ((@front_end_buffer_index_low + @eagerness > (page_no - 1) * @page_size and @eagerness < (page_no - 1) * @page_size ) or
+            (page_no * @page_size > @front_end_buffer_index_high - @eagerness and @total_count - page_no * @page_size > @eagerness))
+          me = this
+          @eager_loading_ongoing = true
           @_reload_by_index((page_no - 1) * @page_size + @page_size / 2, 0)
         $q.when { items: @_find_page_items(page_no), page_count: @_total_page_count() }
       else
@@ -124,6 +128,7 @@
         me._save_results(resp)
     @_save_results = (resp) ->
       @front_end_buffer = []
+      @eager_loading_ongoing = false
       container = this
       for d, i in resp.data.list
         # add indexes to each array
