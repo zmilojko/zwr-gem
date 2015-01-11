@@ -31,6 +31,7 @@
     @front_end_buffer_index_low = null
     @front_end_buffer_index_high = null
     @total_count = null
+    @use_dotjson_suffix = true
     @eager_loading_ongoing = false
     # Method 'item' return the item with given id or the first item available
     # meaning, essentially, any item.
@@ -123,7 +124,7 @@
       Math.trunc((@total_count + @page_size - 1) / @page_size)
     @_reload_by_index = (index, offset) ->
       me = this
-      $http.get("./#{@resource_url}.json?count=#{@front_end_buffer_size}&index=#{index}" + (if offset then "&offset=#{offset}" else "" ))
+      $http.get("./#{@resource_url}#{if @use_dotjson_suffix then '.json' else ''}/?count=#{@front_end_buffer_size}&index=#{index}" + (if offset then "&offset=#{offset}" else "" ))
       .then (resp) ->
         me._save_results(resp)
     @_save_results = (resp) ->
