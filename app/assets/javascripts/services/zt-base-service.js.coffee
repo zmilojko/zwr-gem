@@ -135,6 +135,8 @@
         for own field of d when d[field] instanceof Array
           for list_item, i2 in d[field]
             list_item._index = i2
+        if resp.data.offset? and not d.index?
+          d.index = resp.data.offset + i
         @front_end_buffer.push
           data: d
           copy: angular.copy(d)
