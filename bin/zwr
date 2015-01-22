@@ -7,33 +7,36 @@ require 'rake'
 
 @options = {}
 OptionParser.new do |opts|
+  nl = "\n                                     "
+  
   opts.banner = "Usage: zwr new PROJECT_NAME [options]"
   opts.separator ""
   opts.separator "Specific options:"
+  opts.separator ""
 
-  opts.on("-v", "--[no-]verbose", "Run verbosely, will print really a lot of output") do |v|
+  opts.on("-v", "--[no-]verbose", "Run verbosely, will print really a lot of#{nl}output") do |v|
     @options[:verbose] = v
   end
   
   @options[:bundle] = true
-  opts.on("--skip-bundle", %(Skip bundle install. This will speed up execution, but wil not 
-                                     install missing gems. Useful only for debugging templates.)) do |v|
+  opts.on("--skip-bundle",        "Skip bundle install. This will speed up#{nl}" +
+                                  "execution, but wil not install missing#{nl}" +
+                                  "gems. Only good for debugging templates.") do |v|
     @options[:bundle] = not(v)
   end
   
   @options[:activerecord] = true
-  opts.on("--skip-active-record", %(Skip activerecord. Use this if you will use Mongo.)) do |v|
+  opts.on("--skip-active-record", "Skip activerecord. Use this if you will#{nl}" +
+                                  "use Mongo.") do |v|
     @options[:activerecord] = not(v)
   end
 
-  opts.on("-r", "--ruby RUBY_VER",
-          "Set ruby version in .rvmrc") do |ruby_ver|
+  opts.on("-r", "--ruby RUBY_VER", "Set ruby version in .rvmrc") do |ruby_ver|
     @options[:ruby_ver] = ruby_ver
   end
 
   @options[:mongoid] = false
-  opts.on("--mongoid",
-          "Use MongoDB with Mongoid gem") do |v|
+  opts.on("--mongoid", "Use MongoDB with Mongoid gem") do |v|
     @options[:mongoid] = v
     if @options[:mongoid]
       @options[:activerecord] = false
@@ -41,15 +44,17 @@ OptionParser.new do |opts|
   end
   
   @options[:angular] = true
-  opts.on("--skip-angular", %(Skip angular. If you use Angular, it will also generate the
-                                     Main controller to start the angular app, which
-                                     will be set as root.)) do |v|
+  opts.on("--skip-angular",       "Skip angular. If you use Angular, it#{nl}" +
+                                  "will also generate the Main controller#{nl}" +
+                                  "to start the angular app, which will#{nl}" +
+                                  "be set as root.") do |v|
     @options[:angular] = not(v)
   end
   
   @options[:devise] = true
-  opts.on("--skip-devise", %(Skip Devise . If you use Devise, it will also generate the User
-                                    model and some helper controllers.)) do |v|
+  opts.on("--skip-devise",        "Skip Devise . If you use Devise, it#{nl}" +
+                                  "will also generate the User model and#{nl}" +
+                                  "some helper controllers.") do |v|
     @options[:devise] = not(v)
   end
 end.parse!
