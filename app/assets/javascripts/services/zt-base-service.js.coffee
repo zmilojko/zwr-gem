@@ -121,7 +121,7 @@
       @front_end_buffer.slice (page_no - 1) * @page_size - skipped,
         page_no * @page_size - skipped
     @_total_page_count = () ->
-      Math.trunc((@total_count + @page_size - 1) / @page_size)
+      Math.floor((@total_count + @page_size - 1) / @page_size)
     @_reload_by_index = (index, offset) ->
       me = this
       $http.get("./#{@resource_url}#{if @use_dotjson_suffix then '.json' else ''}/?count=#{@front_end_buffer_size}&index=#{index}" + (if offset then "&offset=#{offset}" else "" ))
