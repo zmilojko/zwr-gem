@@ -27,6 +27,12 @@ namespace :zwr do
   
   desc "prepares production branch ready to roll"
   task :prepare do
+    unless Rails.env == "production"
+      puts "You can only run in this task in production environment."
+      puts "Try:"
+      puts "  RAILS_ENV=production rake zwr:prepare"
+      next
+    end
     Dir.chdir Rails.root
     git_status = `git status`
     unless git_status.downcase.include?("on branch master") && 
