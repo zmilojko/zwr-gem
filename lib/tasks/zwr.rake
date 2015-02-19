@@ -19,6 +19,7 @@ namespace :zwr do
       `git fetch`
       `git checkout production -q`
       `git reset --hard origin/production`
+      `bundle install`
       `touch tmp/restart.txt`
       puts "now with the latest code from origin/production."
       puts "server restarted."
